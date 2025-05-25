@@ -1,14 +1,15 @@
-;; An on-chain counter that stores a count for each individual
+;; Kullanicinin sayacini tutan bir sabit deger
+(define-constant MAX-COUNT u100)
 
-;; Define a map data structure
-(define-map counters principal uint)
+;; Contractta gerceklesen tum islemlerin sayisini tutan degisken
+(define-data-var total-ops uint u0)
 
-;; Function to retrieve the count for a given individual
-(define-read-only (get-count (who principal))
-  (default-to u0 (map-get? counters who))
+;; Toplam islem sayisini getiren method
+(define-read-only (get-total-operations) 
+  (var-get total-ops)
 )
 
-;; Function to increment the count for the caller
-(define-public (count-up)
-  (ok (map-set counters tx-sender (+ (get-count tx-sender) u1)))
+;; Toplam islem sayisini artiran method
+(define-private (update-total-ops) 
+    (var-set total-ops (+ (var-get total-ops) u1 ))
 )
